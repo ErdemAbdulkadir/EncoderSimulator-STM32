@@ -1,0 +1,13 @@
+# Derleme klasörleri
+build/
+Debug/
+Release/
+
+# Qt ara dosyaları
+*.pro.user
+*.qmake.stash
+*.user
+
+# STM32CubeIDE dosyaları
+*.ioc-backup
+*.launch

@@ -1,0 +1,147 @@
+#ifndef UART_PROTOCOL_H
+#define UART_PROTOCOL_H
+
+#include <stdint.h>
+
+#include <stdbool.h>
+
+#define UART_SOP  0xAE
+#define BAUD_RATE 115200
+
+// Uart key
+
+typedef enum UartReqPacKey_e{
+    UartReqPack_EncoderConfig = 0,
+    UartReqPack_EncoderDepth,
+    UartReqPack_EncoderStatus,
+}UartReqPackKey_t;
+
+typedef enum UartResPackKey_e{
+    UartResPack_EncoderConfig = 0,
+    UartResPack_EncoderDepth,
+    UartResPack_EncoderStatus,
+}UartResPackKey_t;
+
+typedef enum encoderSpeed_s{
+    encoderSpeedNone = 0,
+    encoderSpeedLow,
+    encoderSpeedMedium,
+    encoderSpeedHigh,
+}encoderSpeed_t;
+
+typedef enum encoderDirection_s{
+    encoderDirectionNone = 0,
+    encoderDirectionUp,
+    encoderDirectionDown,
+}encoderDirection_t;
+
+typedef enum encoderStatus_s{
+    encoderStatusStart,
+    encoderStatusStop,
+}encoderStatus_t;
+
+// UartReqPacket
+
+typedef struct ReqPackEncoderConfig_s{
+    uint8_t  sop;
+    uint8_t  key;
+    uint8_t  seq;
+    uint16_t resolution;
+    uint8_t  direction;
+    uint8_t  encoderSpeed;
+    uint8_t  cka;
+    uint8_t  ckb;
+}ReqPackEncoderConfig_t;
+
+typedef struct ReqPackEncoderDepth_s{
+    uint8_t  sop;
+    uint8_t  key;
+    uint8_t  seq;
+    uint32_t depth;
+    uint16_t speed;
+    uint8_t  cka;
+    uint8_t  ckb;
+}ReqPackEncoderDepth_t;
+
+typedef struct ReqPackEncoderStatus_s{
+    uint8_t  sop;
+    uint8_t  key;
+    uint8_t  seq;
+    uint8_t  encoderStatus;
+    uint8_t  cka;
+    uint8_t  ckb;
+}ReqPackEncoderStatus_t;
+
+// UartResPacket
+
+typedef struct ResPackEncoderConfig_s{
+    uint8_t  sop;
+    uint8_t  key;
+    uint8_t  seq;
+    uint16_t resolution;
+    uint8_t  direction;
+    uint8_t  encoderSpeed;
+    uint8_t  cka;
+    uint8_t  ckb;
+}ResPackEncoderConfig_t;
+
+typedef struct ResPackEncoderDepth_s{
+    uint8_t  sop;
+    uint8_t  key;
+    uint8_t  seq;
+    uint32_t depth;
+    uint16_t speed;
+    uint8_t  cka;
+    uint8_t  ckb;
+}ResPackEncoderDepth_t;
+
+typedef struct ResPackEncoderStatus_s{
+    uint8_t  sop;
+    uint8_t  key;
+    uint8_t  seq;
+    uint8_t  encoderStatus;
+    uint8_t  cka;
+    uint8_t  ckb;
+}ResPackEncoderStatus_t;
+
+typedef struct uart_s{
+    ReqPackEncoderConfig_t ReqPackEncoderConfig;
+    ReqPackEncoderDepth_t  ReqPackEncoderDepth;
+    ReqPackEncoderStatus_t ReqPackEncoderStatus;
+    ResPackEncoderConfig_t ResPackEncoderConfig;
+    ResPackEncoderDepth_t  ResPackEncoderDepth;
+    ResPackEncoderStatus_t ResPackEncoderStatus;
+}uart_t;
+
+int crc_is_valid(uint8_t* buff, uint32_t len);
+#define CRC_IS_VALID_IMP() \
+int crc_is_valid(uint8_t* buff, uint32_t len) { \
+        if( len < 4)return 0; \
+        uint8_t ck_a = 0, ck_b = 0; \
+        uint32_t i_a = len - 2, i_b = len - 1, i = 0; \
+        for(i = 1; i < len - 2; i++){ \
+            ck_a = (ck_a + buff[i]) & 0xFF; \
+            ck_b = (ck_a + ck_b) & 0xFF; \
+    }\
+        return (buff[i_a] == ck_a && buff[i_b] == ck_b) ? 1 : 0; \
+}
+
+void crc_fill(uint8_t* buff, uint32_t len);
+#define CRC_FILL_IMP() \
+void crc_fill(uint8_t* buff, uint32_t len){ \
+        uint8_t ck_a = 0, ck_b = 0; \
+        uint32_t i_a = len - 2, i_b = len -1, i=0; \
+        for (i = 1; i < len-2; ++i) { \
+            ck_a = (ck_a + buff[i]) & 0xFF; \
+            ck_b = (ck_a + ck_b) & 0xFF; \
+    } \
+        buff[i_a] = ck_a; \
+        buff[i_b] = ck_b; \
+}
+
+uint8_t* uartReqPackKey(UartReqPackKey_t key);
+uint8_t* uartResPackKey(UartResPackKey_t key);
+size_t  sizeOfUartReqPack(UartReqPackKey_t key);
+size_t  sizeOfUartResPack(UartResPackKey_t key);
+
+#endif // UART_PROTOCOL_H
