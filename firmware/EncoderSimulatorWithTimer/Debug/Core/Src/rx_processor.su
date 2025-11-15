@@ -1,2 +1,0 @@
-../Core/Src/rx_processor.c:22:6:rxProgressData	24	static
-../Core/Src/rx_processor.c:71:6:HAL_UARTEx_RxEventCallback	16	static

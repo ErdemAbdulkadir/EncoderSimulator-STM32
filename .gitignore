@@ -1,12 +1,12 @@
-#Root Build Kalsörü
-build/ 
+# Root build folder
+build/
 
-#Software (QT)
-software/build
+# Software (Qt)
+software/build/
 software/*.pro.user
 software/*.pro.user.*
 
-# Firmware (CubeIDE)
+# Firmware (STM32 CubeIDE)
 firmware/EncoderSimulatorWithTimer/.settings/
 firmware/EncoderSimulatorWithTimer/.cproject
 firmware/EncoderSimulatorWithTimer/.mxproject

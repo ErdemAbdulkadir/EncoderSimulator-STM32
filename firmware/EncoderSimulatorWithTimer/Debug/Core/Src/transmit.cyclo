@@ -1,3 +1,0 @@
-../Core/Src/transmit.c:16:9:uartSeq	2
-../Core/Src/transmit.c:24:6:sendEncoderDepth	5
-../Core/Src/transmit.c:46:6:HAL_UART_TxCpltCallback	2
