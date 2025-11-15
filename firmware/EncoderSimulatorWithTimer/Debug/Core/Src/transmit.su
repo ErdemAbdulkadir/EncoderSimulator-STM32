@@ -1,0 +1,3 @@
+../Core/Src/transmit.c:16:9:uartSeq	4	static
+../Core/Src/transmit.c:24:6:sendEncoderDepth	24	static
+../Core/Src/transmit.c:46:6:HAL_UART_TxCpltCallback	16	static

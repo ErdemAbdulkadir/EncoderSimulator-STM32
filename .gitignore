@@ -1,13 +1,14 @@
-# Derleme klasörleri
-build/
-Debug/
-Release/
+#Root Build Kalsörü
+build/ 
 
-# Qt ara dosyaları
-*.pro.user
-*.qmake.stash
-*.user
+#Software (QT)
+software/build
+software/*.pro.user
+software/*.pro.user.*
 
-# STM32CubeIDE dosyaları
-*.ioc-backup
-*.launch
+# Firmware (CubeIDE)
+firmware/EncoderSimulatorWithTimer/.settings/
+firmware/EncoderSimulatorWithTimer/.cproject
+firmware/EncoderSimulatorWithTimer/.mxproject
+firmware/EncoderSimulatorWithTimer/.project
+firmware/EncoderSimulatorWithTimer/Debug/

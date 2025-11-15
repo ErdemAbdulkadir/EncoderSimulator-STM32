@@ -1,0 +1,6 @@
+../Core/Src/uart_protocol.c:7:1:crc_fill	32	static
+../Core/Src/uart_protocol.c:8:1:crc_is_valid	32	static
+../Core/Src/uart_protocol.c:10:10:uartReqPackKey	16	static
+../Core/Src/uart_protocol.c:25:10:uartResPackKey	16	static
+../Core/Src/uart_protocol.c:40:9:sizeOfUartReqPack	16	static
+../Core/Src/uart_protocol.c:55:9:sizeOfUartResPack	16	static
