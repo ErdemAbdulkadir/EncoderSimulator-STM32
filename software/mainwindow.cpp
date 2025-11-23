@@ -1,10 +1,11 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include  "QMessageBox"
+#include "QMessageBox"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
+    , settings("config.ini", QSettings::IniFormat)
 {
     ui->setupUi(this);
     fillCbComPort();
@@ -12,6 +13,8 @@ MainWindow::MainWindow(QWidget *parent)
             &MainWindow::sendDataReceived);
     connect(&receive, &Receive::sendDepthData, this,
             &MainWindow::displayDepthData);
+    connect(&receive, &Receive::sendLog, this,
+            &MainWindow::sendLog);
 }
 
 MainWindow::~MainWindow()
@@ -33,6 +36,12 @@ void MainWindow::displayDepthData(int32_t value, uint16_t speed)
 {
     ui->lcdDepth->display(value);
     ui->lcdSpeed->display(speed);
+    settings.setValue("depthValue", value);
+}
+
+void MainWindow::sendLog(QString msg)
+{
+    ui->pteLog->appendPlainText(msg);
 }
 
 void MainWindow::sendDataReceived(uint8_t *data)
@@ -50,13 +59,15 @@ void MainWindow::on_btnConnect_clicked()
         connect = serialManager.openSerialPort(comPort,BAUD_RATE);
         if(!connect)
         {
-            qDebug() << "comport is not open";
+            sendLogMsgQT("comport is not open");
             return;
         }
         ui->btnConnect->setText("Disconnect");
         ui->btnSaveConfig->setDisabled(false);
         ui->btnStart->setDisabled(false);
         ui->btnStop->setDisabled(false);
+        readConfigValue();
+        sendLogMsgQT("Connect");
         return;
     }
     serialManager.closeSerialPort();
@@ -64,6 +75,7 @@ void MainWindow::on_btnConnect_clicked()
     ui->btnSaveConfig->setDisabled(true);
     ui->btnStart->setDisabled(true);
     ui->btnStop->setDisabled(true);
+    sendLogMsgQT("Disconnect");
 }
 
 void MainWindow::on_btnRefresh_clicked()
@@ -120,9 +132,9 @@ void MainWindow::on_btnSaveConfig_clicked()
         QMessageBox::warning(this,"Warning","Encoder Speed must be selected");
         return;
     }
-    qDebug() << resolutionValue;
-    qDebug() << direction;
-    qDebug() << speed;
+    settings.setValue("resolution",resolutionValue);
+    settings.setValue("direction", direction);
+    settings.setValue("speed", speed);
     serialManager.getTransmit()->sendEncoderConfig(resolutionValue, direction, speed);
 }
 
@@ -142,5 +154,45 @@ void MainWindow::on_btnReset_clicked()
 {
     ui->lcdDepth->display(0);
     serialManager.getTransmit()->sendEncoderDetph(0);
+}
+
+void MainWindow::readConfigValue()
+{
+    QString resolution = settings.value("resolution").toString();
+    uint8_t resolutionValue = settings.value("resolution").toUInt();
+    uint8_t direction = settings.value("direction").toInt();
+    uint8_t speed = settings.value("speed").toUInt();
+    int32_t depth = settings.value("depthValue").toInt();
+
+    ui->leResolution->setText(resolution);
+    ui->lcdDepth->display(depth);
+    if(direction == encoderDirectionUp)
+        ui->radioBtnUp->setChecked(true);
+    else if(direction == encoderDirectionDown)
+        ui->radioBtnDown->setChecked(true);
+    else
+        return;
+
+    if(speed == encoderSpeedLow)
+        ui->radioBtnLow->setChecked(true);
+    else if(speed == encoderSpeedMedium)
+        ui->radioBtnMedium->setChecked(true);
+    else if(speed == encoderSpeedHigh)
+        ui->radioBtnHigh->setChecked(true);
+    else
+        return;
+
+    serialManager.getTransmit()->sendEncoderConfig(resolutionValue, direction, speed);
+}
+
+void MainWindow::on_btnClearLog_clicked()
+{
+    ui->pteLog->clear();
+}
+
+void MainWindow::sendLogMsgQT(QString msg)
+{
+    msg.prepend("[QT]: ");
+    ui->pteLog->appendPlainText(msg);
 }
 

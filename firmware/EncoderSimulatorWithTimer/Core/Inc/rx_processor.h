@@ -15,5 +15,4 @@ extern uint8_t rxBuffer[RX_BUFFER_SIZE];
 extern DMA_HandleTypeDef hdma_usart2_rx;
 extern UART_HandleTypeDef huart2;
 void  rxProgressData(uint8_t* data, uint16_t size);
-
 #endif /* INC_RX_PROCESSOR_H_ */

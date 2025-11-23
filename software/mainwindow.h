@@ -5,7 +5,7 @@
 #include "serialportmanager.h"
 #include "receive.h"
 #include "uart_protocol.h"
-
+#include "QSettings"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -22,6 +22,7 @@ public:
     ~MainWindow();
     void fillCbComPort();
     void displayDepthData(int32_t value, uint16_t speed);
+    void sendLog(QString msg);
 public slots:
     void sendDataReceived(uint8_t* data);
 private slots:
@@ -31,9 +32,15 @@ private slots:
     void on_btnStart_clicked();
     void on_btnStop_clicked();
     void on_btnReset_clicked();
+    void readConfigValue();
+    void on_btnClearLog_clicked();
+    void sendLogMsgQT(QString msg);
+
 private:
     Ui::MainWindow *ui;
     SerialPortManager serialManager;
     Receive           receive;
+    QSettings         settings;
+    QTimer            depthTimer;
 };
 #endif // MAINWINDOW_H

@@ -44,8 +44,19 @@ void Receive::progressReceiveData(uint8_t *data)
     }
     case UartResPack_EncoderStatus:
         break;
+    case UartResPack_Debug:
+    {
+        uint8_t len = Uart.ResPackDebug.msgLen;
+        QString msg ="[STM]: ";
+        for(uint8_t i = 0; i < len; i++)
+        {
+            msg  += QChar(Uart.ResPackDebug.msg[i]);
+        }
+        qDebug() << "msg:" << msg;
+        emit sendLog(msg);
+        msg.clear();
+    }
     default:
         break;
     }
-
 }

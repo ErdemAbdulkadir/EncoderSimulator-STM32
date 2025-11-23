@@ -12,6 +12,7 @@ public:
     void progressReceiveData(uint8_t* data);
 signals:
     void sendDepthData(int32_t value, uint16_t speed);
+    void sendLog(QString msg);
 private:
 
 };

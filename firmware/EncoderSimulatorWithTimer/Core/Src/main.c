@@ -50,6 +50,7 @@ int32_t  lastDepth = 0;
 uint8_t  direction;
 uint8_t  depthSendFlag = 1;
 uint16_t speed;
+uint8_t msg;
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -156,6 +157,7 @@ void processPacket()
 		htim1.Instance->PSC =  Uart.ResPackEncoderConfig.encoderSpeed;
 		htim8.Instance->PSC =  Uart.ResPackEncoderConfig.encoderSpeed;
 		resolution = Uart.ResPackEncoderConfig.resolution;
+		sendDebugMsg((uint8_t*)"Config saved");
 	}
 
 	if(resPackFlag.resEncoderStatusFlag)
@@ -167,11 +169,13 @@ void processPacket()
 			{
 				HAL_TIM_Base_Stop_IT(&htim1);
 				HAL_TIM_Base_Start_IT(&htim8);
+				sendDebugMsg((uint8_t*)"Encoder Up started");
 			}
 			else if(direction == encoderDirectionDown)
 			{
 				HAL_TIM_Base_Start_IT(&htim1);
 				HAL_TIM_Base_Stop_IT(&htim8);
+				sendDebugMsg((uint8_t*)"Encoder Down started");
 			}
 			else
 				return;
@@ -189,6 +193,7 @@ void processPacket()
 			HAL_TIM_PWM_Stop_IT(&htim8, TIM_CHANNEL_1);
 		    HAL_TIM_Base_Stop_IT(&htim6);
 		    sendEncoderDepth(depth, speed);
+		    sendDebugMsg((uint8_t*)"Encoder stopped");
 		}
 		else
 			return;
@@ -200,6 +205,7 @@ void processPacket()
 		sendEncoderDepth(depth,0);
 		counter = 0;
 		lastCounter = 0;
+		sendDebugMsg((uint8_t*)"Encoder is reset");
 	}
 }
 /* USER CODE END 0 */

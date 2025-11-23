@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>586</width>
-    <height>295</height>
+    <width>750</width>
+    <height>485</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,6 +18,16 @@
     <bool>true</bool>
    </property>
    <layout class="QGridLayout" name="gridLayout_3">
+    <item row="2" column="0">
+     <widget class="QLabel" name="label_6">
+      <property name="text">
+       <string>Log:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0" colspan="2">
+     <widget class="QPlainTextEdit" name="pteLog"/>
+    </item>
     <item row="1" column="1">
      <widget class="QGroupBox" name="groupBox_5">
       <property name="title">
@@ -112,13 +122,13 @@ font-weight: bold;</string>
     <item row="1" column="0">
      <widget class="QGroupBox" name="groupBox_2">
       <property name="title">
-       <string>Encoder Congif</string>
+       <string>Encoder Config</string>
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
        <item row="0" column="0" colspan="3">
         <widget class="QLabel" name="label_2">
          <property name="text">
-          <string>Enter encoder resolution:</string>
+          <string>Enter Encoder Resolution:</string>
          </property>
         </widget>
        </item>
@@ -191,6 +201,13 @@ font-weight: bold;</string>
         </widget>
        </item>
       </layout>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QPushButton" name="btnClearLog">
+      <property name="text">
+       <string>Clear Log</string>
+      </property>
      </widget>
     </item>
    </layout>

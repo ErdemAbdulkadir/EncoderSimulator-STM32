@@ -8,18 +8,19 @@
 #define UART_SOP  0xAE
 #define BAUD_RATE 115200
 
-// Uart key
 
 typedef enum UartReqPacKey_e{
     UartReqPack_EncoderConfig = 0,
     UartReqPack_EncoderDepth,
     UartReqPack_EncoderStatus,
+	UartReqPack_Debug,
 }UartReqPackKey_t;
 
 typedef enum UartResPackKey_e{
     UartResPack_EncoderConfig = 0,
     UartResPack_EncoderDepth,
     UartResPack_EncoderStatus,
+	UartResPack_Debug,
 }UartResPackKey_t;
 
 typedef enum encoderSpeed_s{
@@ -50,8 +51,7 @@ typedef struct ReqPackEncoderConfig_s{
     uint8_t  direction;
     uint8_t  encoderSpeed;
     uint8_t  reserved[23];
-    uint8_t  cka;
-    uint8_t  ckb;
+    uint16_t crc;
 }ReqPackEncoderConfig_t;
 
 typedef struct ReqPackEncoderDepth_s{
@@ -61,8 +61,7 @@ typedef struct ReqPackEncoderDepth_s{
     uint32_t depth;
     uint16_t speed;
     uint8_t  reserved[21];
-    uint8_t  cka;
-    uint8_t  ckb;
+    uint16_t crc;
 }ReqPackEncoderDepth_t;
 
 typedef struct ReqPackEncoderStatus_s{
@@ -71,9 +70,18 @@ typedef struct ReqPackEncoderStatus_s{
     uint8_t  seq;
     uint8_t  encoderStatus;
     uint8_t  reserved[26];
-    uint8_t  cka;
-    uint8_t  ckb;
+    uint16_t crc;
 }ReqPackEncoderStatus_t;
+
+typedef struct ReqPackDebug_s{
+    uint8_t sop;
+    uint8_t key;
+    uint8_t seq;
+    uint8_t msgLen;
+    uint8_t msg[24];
+    uint8_t reserved[2];
+    uint16_t crc;
+}ReqPackDebug_t;
 
 // UartResPacket
 
@@ -85,8 +93,7 @@ typedef struct ResPackEncoderConfig_s{
     uint8_t  direction;
     uint8_t  encoderSpeed;
     uint8_t  reserved[23];
-    uint8_t  cka;
-    uint8_t  ckb;
+    uint16_t crc;
 }ResPackEncoderConfig_t;
 
 typedef struct ResPackEncoderDepth_s{
@@ -96,8 +103,7 @@ typedef struct ResPackEncoderDepth_s{
     int32_t  depth;
     uint16_t speed;
     uint8_t  reserved[21];
-    uint8_t  cka;
-    uint8_t  ckb;
+    uint16_t crc;
 }ResPackEncoderDepth_t;
 
 typedef struct ResPackEncoderStatus_s{
@@ -106,9 +112,18 @@ typedef struct ResPackEncoderStatus_s{
     uint8_t  seq;
     uint8_t  encoderStatus;
     uint8_t  reserved[26];
-    uint8_t  cka;
-    uint8_t  ckb;
+    uint16_t crc;
 }ResPackEncoderStatus_t;
+
+typedef struct ResPackDebug_s{
+    uint8_t sop;
+    uint8_t key;
+    uint8_t seq;
+    uint8_t msgLen;
+    uint8_t msg[24];
+    uint8_t reserved[2];
+    uint16_t crc;
+}ResPackDebug_t;
 
 typedef struct ResPackFlag_s{
     uint8_t resEncoderConfigFlag;
@@ -127,37 +142,17 @@ typedef struct uart_s{
     ReqPackEncoderConfig_t ReqPackEncoderConfig;
     ReqPackEncoderDepth_t  ReqPackEncoderDepth;
     ReqPackEncoderStatus_t ReqPackEncoderStatus;
+    ReqPackDebug_t         ReqPackDebug;
     ResPackEncoderConfig_t ResPackEncoderConfig;
     ResPackEncoderDepth_t  ResPackEncoderDepth;
     ResPackEncoderStatus_t ResPackEncoderStatus;
+    ResPackDebug_t         ResPackDebug;
 }uart_t;
 
-int crc_is_valid(uint8_t* buff, uint32_t len);
-#define CRC_IS_VALID_IMP() \
-int crc_is_valid(uint8_t* buff, uint32_t len) { \
-        if( len < 4)return 0; \
-        uint8_t ck_a = 0, ck_b = 0; \
-        uint32_t i_a = len - 2, i_b = len - 1, i = 0; \
-        for(i = 1; i < len - 2; i++){ \
-            ck_a = (ck_a + buff[i]) & 0xFF; \
-            ck_b = (ck_b + ck_a) & 0xFF; \
-    }\
-        return (buff[i_a] == ck_a && buff[i_b] == ck_b) ? 1 : 0; \
-}
-
-void crc_fill(uint8_t* buff, uint32_t len);
-#define CRC_FILL_IMP() \
-void crc_fill(uint8_t* buff, uint32_t len){ \
-        uint8_t ck_a = 0, ck_b = 0; \
-        uint32_t i_a = len - 2, i_b = len -1, i=0; \
-        for (i = 1; i < len-2; ++i) { \
-            ck_a = (ck_a + buff[i]) & 0xFF; \
-            ck_b = (ck_b + ck_a) & 0xFF; \
-    } \
-        buff[i_a] = ck_a; \
-        buff[i_b] = ck_b; \
-}
 #pragma pack(pop)
+uint16_t crc16_modbus(const uint8_t* data, uint32_t len);
+void crc_fill(uint8_t* data, uint32_t len);
+uint8_t crc_is_valid(uint8_t* data, uint32_t len);
 uint8_t* uartReqPackKey(UartReqPackKey_t key);
 uint8_t* uartResPackKey(UartResPackKey_t key);
 size_t  sizeOfUartReqPack(UartReqPackKey_t key);
