@@ -8,7 +8,4 @@ software/*.pro.user.*
 
 # Firmware (STM32 CubeIDE)
 firmware/EncoderSimulatorWithTimer/.settings/
-firmware/EncoderSimulatorWithTimer/.cproject
-firmware/EncoderSimulatorWithTimer/.mxproject
-firmware/EncoderSimulatorWithTimer/.project
 firmware/EncoderSimulatorWithTimer/Debug/

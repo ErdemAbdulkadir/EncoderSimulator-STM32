@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "QMessageBox"
 
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -34,7 +35,8 @@ void MainWindow::fillCbComPort()
 
 void MainWindow::displayDepthData(int32_t value, uint16_t speed)
 {
-    ui->lcdDepth->display(value);
+    double shownValue = value / 100.0;
+    ui->lcdDepth->display(shownValue);
     ui->lcdSpeed->display(speed);
     settings.setValue("depthValue", value);
 }
@@ -142,12 +144,14 @@ void MainWindow::on_btnStart_clicked()
 {
    serialManager.getTransmit()->sendEncoderStatus(encoderStatusStart);
    ui->btnReset->setDisabled(true);
+   ui->btnSaveConfig->setDisabled(true);
 }
 
 void MainWindow::on_btnStop_clicked()
 {
     serialManager.getTransmit()->sendEncoderStatus(encoderStatusStop);
     ui->btnReset->setEnabled(true);
+    ui->btnSaveConfig->setEnabled(true);
 }
 
 void MainWindow::on_btnReset_clicked()

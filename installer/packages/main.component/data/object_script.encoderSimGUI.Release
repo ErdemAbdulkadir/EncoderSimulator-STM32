@@ -1,0 +1,10 @@
+release/main.o
+release/mainwindow.o
+release/receive.o
+release/serialportmanager.o
+release/transmit.o
+release/uart_protocol.o
+release/moc_mainwindow.o
+release/moc_receive.o
+release/moc_serialportmanager.o
+release/moc_transmit.o

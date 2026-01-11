@@ -107,8 +107,9 @@ void calculateDepthValue()
 
 void calculateSpeedValue()
 {
-	speed = (uint16_t)(fabsf(depth - lastDepth)) * 10.0f;
+	speed = (uint16_t)(fabsf(depth - lastDepth) * 10.0f); // ft/min  100ms = 10.0f ve min = 60.0f
 	lastDepth = depth;
+    sendEncoderDepth(depth, speed);
 }
 
 /* USER CODE END PFP */
@@ -121,7 +122,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		calculateDepthValue();
 
 	else if(htim->Instance == TIM6)
-		depthSendFlag = 1;
+		calculateSpeedValue();
+
 }
 
 void processPacket()
@@ -254,14 +256,6 @@ int main(void)
 	while (1)
 	{
 		processPacket();
-		if (depthSendFlag)
-		{
-		    if (huart2.gState == HAL_UART_STATE_READY)
-		    {	calculateSpeedValue();
-		        sendEncoderDepth(depth, speed);
-		        depthSendFlag = 0;
-		    }
-		}
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

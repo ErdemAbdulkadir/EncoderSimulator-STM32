@@ -42,5 +42,6 @@ private:
     Receive           receive;
     QSettings         settings;
     QTimer            depthTimer;
+
 };
 #endif // MAINWINDOW_H
